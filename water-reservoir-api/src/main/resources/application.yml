@@ -1,0 +1,75 @@
+spring:
+  application:
+    name: water-reservoir-api
+  profiles:
+    active: '@profiles.active@'
+  http:
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+  jackson:
+    dateFormat: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    #最大并发数
+    max-threads: 1000
+    #接受和处理的最大连接数
+    max-connections: 20000
+    #初始化时创建的线程数
+    min-SpareThreads: 20
+    acceptCount: 700
+  servlet:
+    encoding:
+      force: true
+
+mybatis-plus:
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+  mapper-locations: classpath*:mapper/*.xml
+mybatis:
+  custom-cache:
+    flushInterval: 3600
+
+# log
+logging:
+  errorFile: /home/data/logs/${spring.application.name}_error.log
+  fileMaxHistory: 30
+  fileMaxSize: 50MB
+  pattern:
+    console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID} [%X{track_id}] ${spring.application.name}){magenta} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx'
+  file:
+    path: /home/data/logs
+    name: ${spring.application.name}.log
+
+# doc
+swagger:
+  enable: true
+  title: 云南省尘肺病康复站管理系统
+  version: 1.0版本
+  description: "补充说明暂无"
+  basePackage: com.zgb.water.common.rest.v1
+  globalHeader: true
+
+knife4j:
+  enable: true
+
+---
+spring:
+  profiles: dev
+  datasource:
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: jdbc:p6spy:mysql://127.0.0.1:3306/waterx_reservoir?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true&rewriteBatchedStatements=true
+    username: root
+    password: root
+  jackson:
+    dateFormat: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+server:
+  port: 8805

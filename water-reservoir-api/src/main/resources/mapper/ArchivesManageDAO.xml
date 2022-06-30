@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 档案管理 -->
+<mapper namespace="com.zgb.water.dao.ArchivesManageDAO">
+    <sql id="allColumns">
+        t.rule_file_id as ruleFileId, t.rscd as rscd, t.dir_id as dirId, t.rule_file_name as ruleFileName, t.rule_type as ruleType, t.update_user as updateUser, t.file_url as fileUrl, t.del_flag as delFlag, 
+        t.create_time as createTime
+    </sql>
+
+    <select id="getArchivesManageByPage" resultType="com.zgb.water.param.output.ArchivesManageDTO">
+       select <include refid="allColumns"/>
+       from archives_manage t
+       where 1=1
+       <if test="vo.rscd!=null">
+           and rscd=#{vo.rscd}
+       </if>
+    </select>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+
+    <springProperty name="LOG_ERROR_FILE" source="logging.errorFile" defaultValue="/server/logs/error.log" />
+    <springProperty name="CONSOLE_LOG_PATTERN" source="logging.pattern.console"/>
+    <springProperty name="FILE_LOG_PATTERN" source="logging.pattern.file"/>
+    <springProperty name="LOG_FILE_MAX_SIZE" source="logging.fileMaxSize" defaultValue="100MB" />
+    <springProperty name="LOG_FILE_MAX_HISTORY" source="logging.fileMaxHistory" defaultValue="15" />
+
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <File>${LOG_ERROR_FILE}</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_ERROR_FILE}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+            <maxFileSize>${LOG_FILE_MAX_SIZE:-10MB}</maxFileSize>
+            <maxHistory>${LOG_FILE_MAX_HISTORY:-0}</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <springProfile name="local">
+        <logger name="com.zgb" level="trace" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <logger name="io.undertow.websockets" level="ERROR" additivity="false">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </logger>
+        <logger name="springfox.documentation.spring.web.readers.parameter" level="ERROR" additivity="false">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="dev">
+        <logger name="com.zgb" level="debug" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="test,prod">
+        <logger name="com.zgb" level="INFO" additivity="false">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </logger>
+        <logger name="org.springframework.boot" level="WARN" additivity="false">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </logger>
+        <logger name="io.undertow.websockets" level="ERROR" additivity="false">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </logger>
+    </springProfile>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+    </root>
+</configuration>
